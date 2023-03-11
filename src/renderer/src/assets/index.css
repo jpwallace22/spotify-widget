@@ -24,3 +24,9 @@ code {
   font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
   font-size: 85%;
 }
+.drag {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  -webkit-app-region: drag;
+}
