@@ -1,34 +1,36 @@
-# spotify-widget
+# Spotify Widget
 
-An Electron application with Solid and TypeScript
+A cross-platform application that shows a small Spotify widget that you can keep in the corner of your desktop while working.
 
-## Recommended IDE Setup
+Tech stack:
 
-- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+- [Electron](https://www.electronjs.org/): Embeds Chromium and Node.js to enable web developers to create desktop applications.
+- [Vite](https://vitejs.dev/): A build tool that significantly improves the front-end development experience
+- [SolidJS](https://www.solidjs.com/): A brutally efficient declarative JS library for building web applications, VERY similar to React (But no shadow dom! 😱).
 
 ## Project Setup
 
 ### Install
 
 ```bash
-$ npm install
+$ yarn
 ```
 
 ### Development
 
 ```bash
-$ npm run dev
+$ yarn dev
 ```
 
 ### Build
 
 ```bash
 # For windows
-$ npm run build:win
+$ yarn build:win
 
 # For macOS
-$ npm run build:mac
+$ yarn build:mac
 
 # For Linux
-$ npm run build:linux
+$ yarn build:linux
 ```
