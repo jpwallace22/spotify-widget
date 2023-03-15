@@ -4,10 +4,12 @@ import solid from 'vite-plugin-solid'
 
 export default defineConfig({
   main: {
-    plugins: [externalizeDepsPlugin()]
+    plugins: [externalizeDepsPlugin()],
+    envPrefix: 'M_VITE'
   },
   preload: {
-    plugins: [externalizeDepsPlugin()]
+    plugins: [externalizeDepsPlugin()],
+    envPrefix: 'P_VITE'
   },
   renderer: {
     resolve: {
@@ -15,6 +17,7 @@ export default defineConfig({
         '@renderer': resolve('src/renderer/src')
       }
     },
-    plugins: [solid()]
+    plugins: [solid()],
+    envPrefix: 'R_VITE'
   }
 })

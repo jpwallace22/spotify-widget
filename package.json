@@ -1,10 +1,17 @@
 {
   "name": "spotify-widget",
   "version": "1.0.0",
-  "description": "An Electron application with Solid and TypeScript",
+  "description": "A small widget to show the most important Spotify information while you work",
   "main": "./out/main/index.js",
-  "author": "example.com",
-  "homepage": "https://www.electronjs.org",
+  "author": "Justin Wallace",
+  "license": "MIT",
+  "homepage": "https://github.com/jpwallace22/spotify-widget",
+  "keywords": [
+    "Spotify",
+    "widget",
+    "electron"
+  ],
+  "packageManager": "yarn@1.22.19",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
@@ -13,6 +20,7 @@
     "typecheck": "npm run typecheck:node && npm run typecheck:web",
     "start": "electron-vite preview",
     "dev": "electron-vite dev",
+    "dev:server": "nodemon src/renderer/src/api/server.ts",
     "build": "npm run typecheck && electron-vite build",
     "postinstall": "electron-builder install-app-deps",
     "build:win": "npm run build && electron-builder --win --config",
@@ -22,12 +30,17 @@
   "dependencies": {
     "@electron-toolkit/preload": "^1.0.3",
     "@electron-toolkit/utils": "^1.0.2",
-    "electron-updater": "^5.3.0"
+    "electron-updater": "^5.3.0",
+    "express": "^4.18.2",
+    "solid-styled-components": "^0.28.5",
+    "spotify-web-api-node": "^5.0.2",
+    "ts-node": "^10.9.1"
   },
   "devDependencies": {
     "@electron-toolkit/tsconfig": "^1.0.1",
     "@electron/notarize": "^1.2.3",
     "@types/node": "16.18.11",
+    "@types/spotify-web-api-node": "^5.0.7",
     "@typescript-eslint/eslint-plugin": "^5.48.0",
     "@typescript-eslint/parser": "^5.48.0",
     "electron": "^21.3.3",
