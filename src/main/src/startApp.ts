@@ -1,25 +1,8 @@
 import { is } from '@electron-toolkit/utils'
 import { BrowserWindow, shell } from 'electron'
 import { join } from 'path'
-import icon from '/resources/icon.png?asset'
 
-const mainWindow = (): void => {
-  const mainWindow = new BrowserWindow({
-    show: false,
-    autoHideMenuBar: true,
-    transparent: true,
-    resizable: false,
-    hasShadow: false,
-    useContentSize: true,
-    alwaysOnTop: true,
-    frame: false,
-    ...(process.platform === 'linux' ? { icon } : {}),
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
-    }
-  })
-
+const startApp = (mainWindow: BrowserWindow): void => {
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
   })
@@ -38,4 +21,4 @@ const mainWindow = (): void => {
   }
 }
 
-export default mainWindow
+export default startApp
