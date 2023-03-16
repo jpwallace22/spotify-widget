@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import path from 'path'
 import spotifyClient from './src/spotifyClient'
@@ -50,12 +50,12 @@ app.whenReady().then(() => {
     }
   })
 
+  const spotifyApi = spotifyClient()
   authFlow(authWindow)
 
   app.on('open-url', (_, redirect) => {
     const url = new URL(redirect)
     const authCode = url.searchParams.get('code')
-    const spotifyApi = spotifyClient()
 
     if (authCode) {
       spotifyApi.authorizationCodeGrant(authCode).then(
@@ -71,6 +71,11 @@ app.whenReady().then(() => {
       )
     }
   })
+
+  ipcMain.handle('spotify:getClient', () => ({
+    accessToken: spotifyApi.getAccessToken(),
+    refreshToken: spotifyApi.getRefreshToken()
+  }))
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
