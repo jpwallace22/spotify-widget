@@ -7,13 +7,14 @@ const authFlow = (authWindow: BrowserWindow | null): void => {
   const params = new URLSearchParams({
     response_type: 'code',
     client_id: M_VITE_SPOTIFY_CLIENT_ID,
-    scope: 'streaming user-read-playback-state user-modify-playback-state',
+    scope:
+      'streaming user-read-playback-state user-modify-playback-state user-read-currently-playing user-read-email user-read-private app-remote-control user-library-read user-library-modify',
     redirect_uri: M_VITE_SPOTIFY_URI_CALLBACK
-    // show_dialog: 'true'
   }).toString()
 
   authWindow?.loadURL(AUTH_URL + params)
 
+  // Show window for callback
   authWindow?.webContents.on('did-navigate', () => {
     authWindow?.show()
   })

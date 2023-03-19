@@ -1,11 +1,11 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, nativeImage, ipcMain } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
-import path from 'path'
+import path, { join } from 'path'
 import spotifyClient from './src/spotifyClient'
 import authFlow from './src/authFlow'
-import startApp from './src/startApp'
-import { join } from 'path'
-import icon from '../../resources/icon.png?asset'
+import createCustomTray from './src/createCustomTray'
+import loadRender from './src/loadRender'
+import fetchTrackInfo from './src/fetchTrackInfo'
 
 // Set custom protocol
 if (process.defaultApp) {
@@ -20,6 +20,7 @@ if (process.defaultApp) {
 
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+  app.dock.hide()
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 
@@ -27,6 +28,9 @@ app.whenReady().then(() => {
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
+
+  const spotifyApi = spotifyClient()
+  const icon = nativeImage.createFromPath(join(__dirname, '../../resources/icon.png'))
 
   const authWindow: BrowserWindow | null = new BrowserWindow({
     resizable: true,
@@ -36,22 +40,22 @@ app.whenReady().then(() => {
 
   const mainWindow = new BrowserWindow({
     show: false,
+    width: 330,
+    height: 112,
     autoHideMenuBar: true,
-    transparent: true,
-    resizable: false,
-    hasShadow: false,
-    useContentSize: true,
+    backgroundColor: '#1d1d1d',
+    // resizable: false,
+    hasShadow: true,
     alwaysOnTop: true,
     frame: false,
-    ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
+      preload: join(__dirname, '../preload/index.js')
     }
   })
 
-  const spotifyApi = spotifyClient()
   authFlow(authWindow)
+
+  loadRender(mainWindow)
 
   app.on('open-url', (_, redirect) => {
     const url = new URL(redirect)
@@ -65,23 +69,25 @@ app.whenReady().then(() => {
             refreshToken: refresh_token
           })
           authWindow?.close()
-          startApp(mainWindow)
         },
-        (err) => console.log('Error when retrieving access token', err)
+        (err) => console.error('Error when retrieving access token', err)
       )
     }
   })
 
-  ipcMain.handle('spotify:getClient', () => ({
+  createCustomTray({
+    icon,
+    clickWindow: mainWindow,
+    onOpenHook: async () => {
+      const track = await fetchTrackInfo(spotifyApi)
+      mainWindow.webContents.send('send-track', track)
+    }
+  })
+
+  ipcMain.handle('spotify:getCredentials', () => ({
     accessToken: spotifyApi.getAccessToken(),
     refreshToken: spotifyApi.getRefreshToken()
   }))
-
-  app.on('activate', function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) startApp(mainWindow)
-  })
 })
 
 // Quit when all windows are closed, except on macOS.
