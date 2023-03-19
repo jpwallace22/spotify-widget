@@ -1,6 +1,6 @@
 :root {
   --white: #fff;
-  --light-gray: #767676;
+  --light-gray: #969696;
   --dark-gray: #1d1d1d;
   --black: #000;
   --primary-green: #1db954;
@@ -21,4 +21,16 @@ body {
 
 ul {
   list-style: none;
+}
+
+h1 {
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+h2 {
+  color: var(--light-gray);
+  font-size: 11px;
+  font-weight: 400;
 }

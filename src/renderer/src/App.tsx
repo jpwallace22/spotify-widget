@@ -1,8 +1,12 @@
+import AlbumInfo from '@renderer/components/AlbumInfo/AlbumInfo'
 import Base from '@renderer/components/Base/Base'
-import type { Component } from 'solid-js'
+import useTrackInfo from '@renderer/hooks/useTrackInfo'
+import { Component } from 'solid-js'
 
 const App: Component = () => {
-  return <Base>We are in</Base>
+  const [track, { isLoading }] = useTrackInfo()
+
+  return <Base>{isLoading() ? 'loading...' : <AlbumInfo track={track()} />}</Base>
 }
 
 export default App

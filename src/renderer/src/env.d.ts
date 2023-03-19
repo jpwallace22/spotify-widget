@@ -9,3 +9,15 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv
 }
+
+interface ITrack extends SpotifyApi.TrackObjectFull {
+  is_saved: boolean
+}
+
+interface ISpotifyApi {
+  getCurrentTrack: (request: (event: IpcMainEvent, data: ITrack) => void) => void
+}
+
+interface Window {
+  spotifyApi: ISpotifyApi
+}
