@@ -1,8 +1,11 @@
-import { ElectronAPI } from '@electron-toolkit/preload'
+interface ISpotifyApi {
+  getCurrentTrack: (
+    request: (event: IpcMainEvent, data: SpotifyApi.TrackObjectFull) => void
+  ) => void
+}
 
 declare global {
   interface Window {
-    electron: ElectronAPI
-    api: unknown
+    spotifyApi: ISpotifyApi
   }
 }
