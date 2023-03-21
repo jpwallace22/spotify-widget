@@ -8,7 +8,7 @@ import {
 
 import Text from '@renderer/molecules/Text'
 import classNames from 'classnames'
-import { Component, createEffect } from 'solid-js'
+import { Component } from 'solid-js'
 
 interface IAlbumInfo {
   track: ITrack
@@ -25,7 +25,10 @@ const AlbumInfo: Component<IAlbumInfo> = (props) => {
             {props.track?.artists[0].name} - {props.track?.album.name}
           </Text>
         </FlexWrapper>
-        <StyledHeart class={classNames({ saved: props.track.is_saved })} />
+        <StyledHeart
+          class={classNames({ saved: props.track.is_saved })}
+          onClick={(): void => window.spotifyApi.updateSavedTrack()}
+        />
       </TextWrapper>
     </AlbumWrapper>
   )

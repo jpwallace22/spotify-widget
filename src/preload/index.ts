@@ -3,8 +3,8 @@ import { contextBridge, ipcRenderer } from 'electron'
 if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('spotifyApi', {
-      getCredentials: () => ipcRenderer.invoke('spotify:getCredentials'),
-      getCurrentTrack: (callback) => ipcRenderer.on('send-track', callback)
+      getCurrentTrack: (callback) => ipcRenderer.on('spotify:send-track', callback),
+      updateSavedTrack: () => ipcRenderer.invoke('spotify:update-saved')
     })
   } catch (error) {
     console.error(error)

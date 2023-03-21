@@ -16,6 +16,7 @@ interface ITrack extends SpotifyApi.TrackObjectFull {
 
 interface ISpotifyApi {
   getCurrentTrack: (request: (event: IpcMainEvent, data: ITrack) => void) => void
+  updateSavedTrack: () => void
 }
 
 interface Window {

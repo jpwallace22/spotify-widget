@@ -31,8 +31,14 @@ export const StyledHeart = styled(Heart)`
   fill: transparent;
   width: 18px;
   cursor: pointer;
+  :hover {
+    stroke: var(--white);
+  }
   &.saved {
     stroke: var(--primary-green);
     fill: var(--primary-green);
+    :hover {
+      stroke: var(--primary-green);
+    }
   }
 `

@@ -6,7 +6,7 @@ import { Component } from 'solid-js'
 const App: Component = () => {
   const [track, { isLoading }] = useTrackInfo()
 
-  return <Base>{isLoading() ? 'loading...' : <AlbumInfo track={track()} />}</Base>
+  return <Base>{isLoading() ? 'loading...' : <AlbumInfo track={track() as ITrack} />}</Base>
 }
 
 export default App

@@ -1,11 +1,13 @@
 import { app, BrowserWindow, nativeImage, ipcMain } from 'electron'
-import { electronApp, optimizer } from '@electron-toolkit/utils'
+import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import path, { join } from 'path'
-import spotifyClient from './src/spotifyClient'
-import authFlow from './src/authFlow'
+import spotifyClient from './src/spotify/spotifyClient'
+import authFlow from './src/spotify/authFlow'
 import createCustomTray from './src/createCustomTray'
 import loadRender from './src/loadRender'
-import fetchTrackInfo from './src/fetchTrackInfo'
+import fetchTrackInfo from './src/spotify/fetchTrackInfo'
+import store from './src/store'
+import updateSavedTrack from './src/spotify/updateSavedTrack'
 
 // Set custom protocol
 if (process.defaultApp) {
@@ -44,7 +46,7 @@ app.whenReady().then(() => {
     height: 112,
     autoHideMenuBar: true,
     backgroundColor: '#1d1d1d',
-    // resizable: false,
+    resizable: !is.dev,
     hasShadow: true,
     alwaysOnTop: true,
     frame: false,
@@ -80,14 +82,20 @@ app.whenReady().then(() => {
     clickWindow: mainWindow,
     onOpenHook: async () => {
       const track = await fetchTrackInfo(spotifyApi)
-      mainWindow.webContents.send('send-track', track)
+      mainWindow.webContents.send('spotify:send-track', track)
+      store.set({ track })
     }
   })
 
-  ipcMain.handle('spotify:getCredentials', () => ({
-    accessToken: spotifyApi.getAccessToken(),
-    refreshToken: spotifyApi.getRefreshToken()
-  }))
+  ipcMain.handle('spotify:update-saved', async () => {
+    const res = await updateSavedTrack(spotifyApi)
+    if (res.statusCode === 200) {
+      const track = store.get('track')
+      mainWindow.webContents.send('spotify:send-track', track)
+    } else {
+      console.log('Failed to update saved track')
+    }
+  })
 })
 
 // Quit when all windows are closed, except on macOS.

@@ -1,12 +1,5 @@
 import Store from 'electron-store'
 
-const schema = {
-  launchAtStart: {
-    type: 'boolean',
-    default: true
-  }
-} as const
-
-const store = new Store({ schema })
+const store = new Store()
 
 export default store
