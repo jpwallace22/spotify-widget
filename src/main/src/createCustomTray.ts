@@ -4,15 +4,9 @@ interface ICustomTray {
   icon: NativeImage
   clickWindow: BrowserWindow
   rightClickWindow?: BrowserWindow
-  onOpenHook?: () => void
 }
 
-const createCustomTray = ({
-  icon,
-  clickWindow,
-  rightClickWindow,
-  onOpenHook
-}: ICustomTray): void => {
+const createCustomTray = ({ icon, clickWindow, rightClickWindow }: ICustomTray): Tray => {
   const tray = new Tray(icon)
   tray.setIgnoreDoubleClickEvents(true) // required for macOS
 
@@ -33,11 +27,10 @@ const createCustomTray = ({
     window.setVisibleOnAllWorkspaces(false)
   }
 
-  const toggleWindow = (window: BrowserWindow, openHook?: () => void): void => {
+  const toggleWindow = (window: BrowserWindow): void => {
     if (window.isVisible()) {
       window.hide()
     } else {
-      openHook && openHook()
       showWindow(window)
     }
   }
@@ -52,10 +45,12 @@ const createCustomTray = ({
     tray.popUpContextMenu(Menu.buildFromTemplate(menu))
   }
 
-  tray.on('click', () => toggleWindow(clickWindow, onOpenHook ? onOpenHook : undefined))
+  tray.on('click', () => toggleWindow(clickWindow))
   tray.on('right-click', () =>
     rightClickWindow ? toggleWindow(rightClickWindow) : defaultRightClick()
   )
+
+  return tray
 }
 
 export default createCustomTray

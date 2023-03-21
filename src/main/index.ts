@@ -81,14 +81,14 @@ app.whenReady().then(() => {
 
   // Create menu with main window
   const icon = nativeImage.createFromPath(join(__dirname, '../../resources/icon.png'))
-  createCustomTray({
+  const mainTray = createCustomTray({
     icon,
-    clickWindow: mainWindow,
-    onOpenHook: async () => {
-      const track = await fetchTrackInfo(spotifyApi)
-      mainWindow.webContents.send('spotify:send-track', track)
-      store.set({ track })
-    }
+    clickWindow: mainWindow
+  })
+  mainTray.on('mouse-enter', async () => {
+    const track = await fetchTrackInfo(spotifyApi)
+    mainWindow.webContents.send('spotify:send-track', track)
+    store.set({ track })
   })
 
   // handle the saving of tracks
