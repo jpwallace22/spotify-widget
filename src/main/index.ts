@@ -23,6 +23,7 @@ if (process.defaultApp) {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   app.dock.hide()
+
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 
@@ -31,19 +32,20 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
+  // init client for Api
   const spotifyApi = spotifyClient()
-  const icon = nativeImage.createFromPath(join(__dirname, '../../resources/icon.png'))
 
+  // create windows
   const authWindow: BrowserWindow | null = new BrowserWindow({
     resizable: true,
     useContentSize: true,
     show: false
   })
-
   const mainWindow = new BrowserWindow({
     show: false,
     width: 330,
     height: 112,
+    useContentSize: true,
     autoHideMenuBar: true,
     backgroundColor: '#1d1d1d',
     resizable: !is.dev,
@@ -56,9 +58,9 @@ app.whenReady().then(() => {
   })
 
   authFlow(authWindow)
-
   loadRender(mainWindow)
 
+  // Catch auth callback and set access token
   app.on('open-url', (_, redirect) => {
     const url = new URL(redirect)
     const authCode = url.searchParams.get('code')
@@ -77,6 +79,8 @@ app.whenReady().then(() => {
     }
   })
 
+  // Create menu with main window
+  const icon = nativeImage.createFromPath(join(__dirname, '../../resources/icon.png'))
   createCustomTray({
     icon,
     clickWindow: mainWindow,
@@ -87,6 +91,7 @@ app.whenReady().then(() => {
     }
   })
 
+  // handle the saving of tracks
   ipcMain.handle('spotify:update-saved', async () => {
     const res = await updateSavedTrack(spotifyApi)
     if (res.statusCode === 200) {
@@ -96,6 +101,8 @@ app.whenReady().then(() => {
       console.log('Failed to update saved track')
     }
   })
+
+  mainWindow.on('blur', () => mainWindow.hide())
 })
 
 // Quit when all windows are closed, except on macOS.
