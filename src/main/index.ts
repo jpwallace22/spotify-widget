@@ -48,7 +48,7 @@ app.whenReady().then(() => {
     useContentSize: true,
     autoHideMenuBar: true,
     backgroundColor: '#1d1d1d',
-    resizable: !is.dev,
+    resizable: is.dev,
     hasShadow: true,
     alwaysOnTop: true,
     frame: false,
@@ -102,7 +102,7 @@ app.whenReady().then(() => {
     }
   })
 
-  mainWindow.on('blur', () => mainWindow.hide())
+  mainWindow.on('blur', () => !is.dev && mainWindow.hide())
 })
 
 // Quit when all windows are closed, except on macOS.
