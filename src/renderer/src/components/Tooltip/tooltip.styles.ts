@@ -8,7 +8,7 @@ export const StyledTip = styled.div`
   position: absolute;
   bottom: calc(100% + 15px);
   width: max-content;
-  transform: translate(-30%, 5px);
+  transform: translate(-40%, 5px);
   font-size: 14px;
   letter-spacing: 0.02em;
   padding: 8px 12px;
@@ -22,7 +22,7 @@ export const StyledTip = styled.div`
     visibility: visible;
     opacity: 1;
     transition: 0.2s ease-out;
-    transform: translate(-30%, 0px);
+    transform: translate(-40%, 0px);
     transition-property: opacity, transform;
   }
 `
