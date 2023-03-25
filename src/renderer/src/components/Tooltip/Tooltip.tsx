@@ -3,19 +3,21 @@ import classNames from 'classnames'
 import { Component, createEffect, createSignal, JSXElement, mergeProps, on } from 'solid-js'
 
 interface ITooltip {
-  tip: string
+  tip?: string
   children: JSXElement
   waitTime?: number
 }
 
 const Tooltip: Component<ITooltip> = (props) => {
   const [showTip, setShowTip] = createSignal(false)
-  const merged = mergeProps({ waitTime: 500 }, props)
+  const merged = mergeProps({ waitTime: 200 }, props)
 
   let timer: number
 
   const handleMouseEnter = (): void => {
-    timer = setTimeout(() => setShowTip(true), merged.waitTime)
+    if (props.tip) {
+      timer = setTimeout(() => setShowTip(true), merged.waitTime)
+    }
   }
   const handleMouseLeave = (): void => {
     clearTimeout(timer)

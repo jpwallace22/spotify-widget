@@ -7,7 +7,7 @@ export const TooltipWrapper = styled.div`
 export const StyledTip = styled.div`
   position: absolute;
   bottom: calc(100% + 15px);
-  width: fit-content;
+  width: max-content;
   transform: translate(-30%, 5px);
   font-size: 14px;
   letter-spacing: 0.02em;

@@ -20,7 +20,6 @@ if (process.defaultApp) {
   app.setAsDefaultProtocolClient('spotify-mini')
 }
 
-// Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   app.dock.hide()
 
@@ -85,6 +84,8 @@ app.whenReady().then(() => {
     icon,
     clickWindow: mainWindow
   })
+
+  // load track on icon hover
   mainTray.on('mouse-enter', async () => {
     const track = await fetchTrackInfo(spotifyApi)
     mainWindow.webContents.send('spotify:send-track', track)
@@ -103,11 +104,4 @@ app.whenReady().then(() => {
   })
 
   mainWindow.on('blur', () => !is.dev && mainWindow.hide())
-})
-
-// Quit when all windows are closed, except on macOS.
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
 })

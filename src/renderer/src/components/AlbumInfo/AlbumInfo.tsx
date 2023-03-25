@@ -1,12 +1,12 @@
 import {
   AlbumArt,
   AlbumWrapper,
-  FlexWrapper,
-  StyledHeart,
+  FlexCol,
   TextWrapper
 } from '@renderer/components/AlbumInfo/albumInfo.styles'
-import Tooltip from '@renderer/components/Tooltip/Tooltip'
-
+import Button from '@renderer/components/Button/Button'
+import ControlPanel from '@renderer/components/ControlPanel/ControlPanel'
+import FlexRow from '@renderer/molecules/FlexRow'
 import Text from '@renderer/molecules/Text'
 import classNames from 'classnames'
 import { Component } from 'solid-js'
@@ -21,18 +21,24 @@ const AlbumInfo: Component<IAlbumInfo> = (props) => {
     <AlbumWrapper>
       <AlbumArt src={props.track.album.images[0].url} />
       <TextWrapper>
-        <FlexWrapper>
-          <Text size="md">{props.track?.name}</Text>
-          <Text size="sm" color="lightGray">
+        <FlexCol>
+          <Text size="md" clamp={1}>
+            {props.track?.name}
+          </Text>
+          <Text size="sm" color="lightGray" clamp={2}>
             {props.track?.artists[0].name} - {props.track?.album.name}
           </Text>
-        </FlexWrapper>
-        <Tooltip tip="Save This Track">
-          <StyledHeart
-            class={classNames({ saved: props.track.is_saved })}
+        </FlexCol>
+        <FlexRow gap="24px">
+          <Button
+            id="heart"
+            class={classNames('icon', { saved: props.track.is_saved })}
             onClick={(): void => window.spotifyApi.updateSavedTrack()}
+            tooltip={props.track.is_saved ? 'Remove from Library' : 'Add to Library'}
           />
-        </Tooltip>
+          <ControlPanel />
+          <Button id="playlist" class="icon" tooltip="Add to Playlist" />
+        </FlexRow>
       </TextWrapper>
     </AlbumWrapper>
   )
