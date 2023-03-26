@@ -12,11 +12,15 @@ interface ImportMeta {
 
 interface ITrack extends SpotifyApi.TrackObjectFull {
   is_saved: boolean
+  is_playing: boolean
 }
 
 interface ISpotifyApi {
   getCurrentTrack: (request: (event: IpcMainEvent, data: ITrack) => void) => void
   updateSavedTrack: () => void
+  nextTrack: () => void
+  prevTrack: () => void
+  togglePlay: () => void
 }
 
 interface Window {

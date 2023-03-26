@@ -36,7 +36,7 @@ const AlbumInfo: Component<IAlbumInfo> = (props) => {
             onClick={(): void => window.spotifyApi.updateSavedTrack()}
             tooltip={props.track.is_saved ? 'Remove from Library' : 'Add to Library'}
           />
-          <ControlPanel />
+          <ControlPanel isPlaying={props.track.is_playing} />
           <Button id="playlist" class="icon" tooltip="Add to Playlist" />
         </FlexRow>
       </TextWrapper>
