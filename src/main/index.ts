@@ -8,6 +8,7 @@ import loadRender from './src/loadRender'
 import fetchTrackInfo from './src/spotify/fetchTrackInfo'
 import updateSavedTrack from './src/spotify/updateSavedTrack'
 import pausePlay from './src/spotify/pausePlay'
+import { screen } from 'electron'
 
 // Set custom protocol
 if (process.defaultApp) {
@@ -40,6 +41,20 @@ app.whenReady().then(() => {
     useContentSize: true,
     show: false
   })
+  const playListWindow: BrowserWindow | null = new BrowserWindow({
+    width: 200,
+    resizable: false,
+    useContentSize: true,
+    show: false,
+    hasShadow: false,
+    autoHideMenuBar: true,
+    backgroundColor: '#1d1d1d',
+    frame: false,
+    alwaysOnTop: true,
+    webPreferences: {
+      preload: join(__dirname, '../preload/index.js')
+    }
+  })
   const mainWindow = new BrowserWindow({
     show: false,
     width: 330,
@@ -58,6 +73,13 @@ app.whenReady().then(() => {
 
   authFlow(authWindow)
   loadRender(mainWindow)
+
+  // Create Tray with main window
+  const icon = nativeImage.createFromPath(join(__dirname, '../../resources/icon.png'))
+  const mainTray = createCustomTray({
+    icon,
+    clickWindow: mainWindow
+  })
 
   // Catch auth callback and set access token
   app.on('open-url', (_, redirect) => {
@@ -78,11 +100,11 @@ app.whenReady().then(() => {
     }
   })
 
-  // Create menu with main window
-  const icon = nativeImage.createFromPath(join(__dirname, '../../resources/icon.png'))
-  const mainTray = createCustomTray({
-    icon,
-    clickWindow: mainWindow
+  ipcMain.handle('playlist:open', () => {
+    console.log('🚀 open clicked')
+    const mousePos = screen.getCursorScreenPoint()
+    playListWindow.show()
+    playListWindow.setPosition(mousePos.x, mousePos.y)
   })
 
   // load track on icon hover
@@ -118,4 +140,5 @@ app.whenReady().then(() => {
   })
 
   mainWindow.on('blur', () => !is.dev && mainWindow.hide())
+  playListWindow.on('blur', () => playListWindow.hide())
 })

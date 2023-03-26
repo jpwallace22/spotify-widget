@@ -4,11 +4,8 @@ import {
   FlexCol,
   TextWrapper
 } from '@renderer/components/AlbumInfo/albumInfo.styles'
-import Button from '@renderer/components/Button/Button'
 import ControlPanel from '@renderer/components/ControlPanel/ControlPanel'
-import FlexRow from '@renderer/molecules/FlexRow'
 import Text from '@renderer/molecules/Text'
-import classNames from 'classnames'
 import { Component, Show } from 'solid-js'
 
 interface IAlbumInfo {
@@ -38,16 +35,7 @@ const AlbumInfo: Component<IAlbumInfo> = (props) => {
               {props.track?.artists[0].name} - {props.track?.album.name}
             </Text>
           </FlexCol>
-          <FlexRow gap="24px">
-            <Button
-              id="heart"
-              class={classNames('icon', { saved: props.track.is_saved })}
-              onClick={(): void => window.spotifyApi.updateSavedTrack()}
-              tooltip={props.track.is_saved ? 'Remove from Library' : 'Add to Library'}
-            />
-            <ControlPanel isPlaying={props.track.is_playing} />
-            <Button id="playlist" class="icon" tooltip="Add to Playlist" />
-          </FlexRow>
+          <ControlPanel isPlaying={props.track.is_playing} isSaved={props.track.is_saved} />
         </TextWrapper>
       </AlbumWrapper>
     </Show>

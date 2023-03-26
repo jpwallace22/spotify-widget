@@ -23,6 +23,11 @@ interface ISpotifyApi {
   togglePlay: () => void
 }
 
+interface IPlaylistApi {
+  openPlaylist: () => void
+}
+
 interface Window {
   spotifyApi: ISpotifyApi
+  playlistApi: IPlaylistApi
 }

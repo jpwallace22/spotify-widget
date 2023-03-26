@@ -9,6 +9,9 @@ if (process.contextIsolated) {
       prevTrack: () => ipcRenderer.invoke('spotify:prev-track'),
       togglePlay: () => ipcRenderer.invoke('spotify:toggle-play')
     })
+    contextBridge.exposeInMainWorld('playlistApi', {
+      openPlaylist: () => ipcRenderer.invoke('playlist:open')
+    })
   } catch (error) {
     console.error(error)
   }
