@@ -1,21 +1,29 @@
 import SpotifyWebApi from 'spotify-web-api-node'
+import store from '../store'
 
-interface ITrack extends SpotifyApi.TrackObjectFull {
+export interface ITrack extends SpotifyApi.TrackObjectFull {
   is_saved: boolean
+  is_playing: boolean
 }
 
-const fetchTrackInfo = async (client: SpotifyWebApi): Promise<ITrack> => {
+const fetchTrackInfo = async (client: SpotifyWebApi): Promise<ITrack | null> => {
   // cant use Promise.all because data is needed from first fetch
-  const trackData = await client.getMyCurrentPlayingTrack()
-  const track = trackData.body.item
-  const savedData = track?.id && (await client.containsMySavedTracks([track?.id]))
+  const playbackState = await client.getMyCurrentPlaybackState()
+  const playbackItem = playbackState.body.item
+  const savedData = playbackItem?.id && (await client.containsMySavedTracks([playbackItem?.id]))
 
-  const result = track && {
-    ...track,
-    is_saved: !!(savedData && savedData.body[0])
+  if (!playbackItem) {
+    return null
   }
 
-  return result as ITrack
+  const track = {
+    ...playbackItem,
+    is_saved: !!(savedData && savedData.body[0]),
+    is_playing: playbackState.body.is_playing
+  }
+
+  store.set({ track })
+  return track as ITrack
 }
 
 export default fetchTrackInfo

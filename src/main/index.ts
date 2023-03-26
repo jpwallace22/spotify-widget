@@ -6,8 +6,8 @@ import authFlow from './src/spotify/authFlow'
 import createCustomTray from './src/createCustomTray'
 import loadRender from './src/loadRender'
 import fetchTrackInfo from './src/spotify/fetchTrackInfo'
-import store from './src/store'
 import updateSavedTrack from './src/spotify/updateSavedTrack'
+import pausePlay from './src/spotify/pausePlay'
 
 // Set custom protocol
 if (process.defaultApp) {
@@ -89,18 +89,32 @@ app.whenReady().then(() => {
   mainTray.on('mouse-enter', async () => {
     const track = await fetchTrackInfo(spotifyApi)
     mainWindow.webContents.send('spotify:send-track', track)
-    store.set({ track })
   })
 
   // handle the saving of tracks
   ipcMain.handle('spotify:update-saved', async () => {
-    const res = await updateSavedTrack(spotifyApi)
-    if (res.statusCode === 200) {
-      const track = store.get('track')
-      mainWindow.webContents.send('spotify:send-track', track)
-    } else {
-      console.log('Failed to update saved track')
-    }
+    const updatedTrack = await updateSavedTrack(spotifyApi)
+    updatedTrack && mainWindow.webContents.send('spotify:send-track', updatedTrack)
+  })
+
+  // handle Skip Track
+  ipcMain.handle('spotify:next-track', async () => {
+    await spotifyApi.skipToNext()
+    const track = await fetchTrackInfo(spotifyApi)
+    mainWindow.webContents.send('spotify:send-track', track)
+  })
+
+  // handle Prev Track
+  ipcMain.handle('spotify:prev-track', async () => {
+    await spotifyApi.skipToPrevious()
+    const track = await fetchTrackInfo(spotifyApi)
+    mainWindow.webContents.send('spotify:send-track', track)
+  })
+
+  // handle pause/play Track
+  ipcMain.handle('spotify:toggle-play', async () => {
+    const updatedTrack = await pausePlay(spotifyApi)
+    mainWindow.webContents.send('spotify:send-track', updatedTrack)
   })
 
   mainWindow.on('blur', () => !is.dev && mainWindow.hide())
