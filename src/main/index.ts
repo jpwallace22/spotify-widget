@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeImage, ipcMain } from 'electron'
+import { app, BrowserWindow, nativeImage, ipcMain, Menu } from 'electron'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import path, { join } from 'path'
 import spotifyClient from './src/spotify/spotifyClient'
@@ -8,7 +8,7 @@ import loadRender from './src/loadRender'
 import fetchTrackInfo from './src/spotify/fetchTrackInfo'
 import updateSavedTrack from './src/spotify/updateSavedTrack'
 import pausePlay from './src/spotify/pausePlay'
-import { screen } from 'electron'
+import createPlaylistTemplate from './src/spotify/createPlaylistTemplate'
 
 // Set custom protocol
 if (process.defaultApp) {
@@ -41,20 +41,6 @@ app.whenReady().then(() => {
     useContentSize: true,
     show: false
   })
-  const playListWindow: BrowserWindow | null = new BrowserWindow({
-    width: 200,
-    resizable: false,
-    useContentSize: true,
-    show: false,
-    hasShadow: false,
-    autoHideMenuBar: true,
-    backgroundColor: '#1d1d1d',
-    frame: false,
-    alwaysOnTop: true,
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js')
-    }
-  })
   const mainWindow = new BrowserWindow({
     show: false,
     width: 330,
@@ -72,7 +58,7 @@ app.whenReady().then(() => {
   })
 
   authFlow(authWindow)
-  loadRender(mainWindow)
+  loadRender(mainWindow, 'index')
 
   // Create Tray with main window
   const icon = nativeImage.createFromPath(join(__dirname, '../../resources/icon.png'))
@@ -80,6 +66,8 @@ app.whenReady().then(() => {
     icon,
     clickWindow: mainWindow
   })
+
+  // const playlistMenu = Menu.buildFromTemplate(template)
 
   // Catch auth callback and set access token
   app.on('open-url', (_, redirect) => {
@@ -100,17 +88,14 @@ app.whenReady().then(() => {
     }
   })
 
-  ipcMain.handle('playlist:open', () => {
-    console.log('🚀 open clicked')
-    const mousePos = screen.getCursorScreenPoint()
-    playListWindow.show()
-    playListWindow.setPosition(mousePos.x, mousePos.y)
-  })
+  let playlistMenu: Electron.Menu
 
   // load track on icon hover
   mainTray.on('mouse-enter', async () => {
     const track = await fetchTrackInfo(spotifyApi)
     mainWindow.webContents.send('spotify:send-track', track)
+    const template = await createPlaylistTemplate(spotifyApi)
+    playlistMenu = Menu.buildFromTemplate(template)
   })
 
   // handle the saving of tracks
@@ -139,6 +124,10 @@ app.whenReady().then(() => {
     mainWindow.webContents.send('spotify:send-track', updatedTrack)
   })
 
+  ipcMain.handle('playlist:open', async () => {
+    console.log('🚀 open clicked')
+    playlistMenu.popup()
+  })
+
   mainWindow.on('blur', () => !is.dev && mainWindow.hide())
-  playListWindow.on('blur', () => playListWindow.hide())
 })

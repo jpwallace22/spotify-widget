@@ -8,7 +8,7 @@ const authFlow = (authWindow: BrowserWindow | null): void => {
     response_type: 'code',
     client_id: M_VITE_SPOTIFY_CLIENT_ID,
     scope:
-      'streaming user-read-playback-state user-modify-playback-state user-read-currently-playing user-read-email user-read-private app-remote-control user-library-read user-library-modify',
+      'streaming user-read-playback-state user-modify-playback-state user-read-currently-playing user-read-email user-read-private app-remote-control user-library-read user-library-modify playlist-modify-private playlist-modify-public',
     redirect_uri: M_VITE_SPOTIFY_URI_CALLBACK
   }).toString()
 
