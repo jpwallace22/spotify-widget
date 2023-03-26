@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeImage, ipcMain } from 'electron'
+import { app, BrowserWindow, nativeImage, ipcMain, Menu } from 'electron'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import path, { join } from 'path'
 import spotifyClient from './src/spotify/spotifyClient'
@@ -8,6 +8,7 @@ import loadRender from './src/loadRender'
 import fetchTrackInfo from './src/spotify/fetchTrackInfo'
 import updateSavedTrack from './src/spotify/updateSavedTrack'
 import pausePlay from './src/spotify/pausePlay'
+import createPlaylistTemplate from './src/spotify/createPlaylistTemplate'
 
 // Set custom protocol
 if (process.defaultApp) {
@@ -57,7 +58,16 @@ app.whenReady().then(() => {
   })
 
   authFlow(authWindow)
-  loadRender(mainWindow)
+  loadRender(mainWindow, 'index')
+
+  // Create Tray with main window
+  const icon = nativeImage.createFromPath(join(__dirname, '../../resources/icon.png'))
+  const mainTray = createCustomTray({
+    icon,
+    clickWindow: mainWindow
+  })
+
+  // const playlistMenu = Menu.buildFromTemplate(template)
 
   // Catch auth callback and set access token
   app.on('open-url', (_, redirect) => {
@@ -78,17 +88,14 @@ app.whenReady().then(() => {
     }
   })
 
-  // Create menu with main window
-  const icon = nativeImage.createFromPath(join(__dirname, '../../resources/icon.png'))
-  const mainTray = createCustomTray({
-    icon,
-    clickWindow: mainWindow
-  })
+  let playlistMenu: Electron.Menu
 
   // load track on icon hover
   mainTray.on('mouse-enter', async () => {
     const track = await fetchTrackInfo(spotifyApi)
     mainWindow.webContents.send('spotify:send-track', track)
+    const template = await createPlaylistTemplate(spotifyApi)
+    playlistMenu = Menu.buildFromTemplate(template)
   })
 
   // handle the saving of tracks
@@ -115,6 +122,11 @@ app.whenReady().then(() => {
   ipcMain.handle('spotify:toggle-play', async () => {
     const updatedTrack = await pausePlay(spotifyApi)
     mainWindow.webContents.send('spotify:send-track', updatedTrack)
+  })
+
+  ipcMain.handle('playlist:open', async () => {
+    console.log('🚀 open clicked')
+    playlistMenu.popup()
   })
 
   mainWindow.on('blur', () => !is.dev && mainWindow.hide())
