@@ -12,6 +12,9 @@ if (process.contextIsolated) {
     contextBridge.exposeInMainWorld('playlistApi', {
       openPlaylist: () => ipcRenderer.invoke('playlist:open')
     })
+    contextBridge.exposeInMainWorld('electronApi', {
+      getMessage: (callback) => ipcRenderer.on('electron:send-message', callback)
+    })
   } catch (error) {
     console.error(error)
   }

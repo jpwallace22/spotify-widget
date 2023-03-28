@@ -2,7 +2,7 @@ import { app, BrowserWindow, nativeImage, ipcMain, Menu } from 'electron'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import path, { join } from 'path'
 import spotifyClient from './src/spotify/spotifyClient'
-import authFlow from './src/spotify/authFlow'
+import authFlow, { refreshToken } from './src/spotify/authFlow'
 import createCustomTray from './src/createCustomTray'
 import loadRender from './src/loadRender'
 import fetchTrackInfo from './src/spotify/fetchTrackInfo'
@@ -88,11 +88,13 @@ app.whenReady().then(() => {
     }
   })
 
+  setInterval(() => refreshToken(spotifyApi), 1000 * 60 * 45)
+
   let playlistMenu: Electron.Menu
 
   // load track on icon hover
   mainTray.on('mouse-enter', async () => {
-    const track = await fetchTrackInfo(spotifyApi)
+    const track = await fetchTrackInfo(spotifyApi, authWindow)
     mainWindow.webContents.send('spotify:send-track', track)
     const template = await createPlaylistTemplate(spotifyApi)
     playlistMenu = Menu.buildFromTemplate(template)
@@ -102,6 +104,10 @@ app.whenReady().then(() => {
   ipcMain.handle('spotify:update-saved', async () => {
     const updatedTrack = await updateSavedTrack(spotifyApi)
     updatedTrack && mainWindow.webContents.send('spotify:send-track', updatedTrack)
+    mainWindow.webContents.send('electron:send-message', {
+      message: updatedTrack ? 'Track Saved' : 'Save Failed',
+      status: updatedTrack ? 'success' : 'error'
+    })
   })
 
   // handle Skip Track
@@ -125,7 +131,6 @@ app.whenReady().then(() => {
   })
 
   ipcMain.handle('playlist:open', async () => {
-    console.log('🚀 open clicked')
     playlistMenu.popup()
   })
 

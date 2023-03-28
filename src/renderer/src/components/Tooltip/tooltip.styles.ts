@@ -11,18 +11,9 @@ export const StyledTip = styled.div`
   transform: translate(-40%, 5px);
   font-size: 14px;
   letter-spacing: 0.02em;
-  padding: 8px 12px;
+  padding: 12px;
   border-radius: 4px;
   color: var(--white);
   filter: drop-shadow(1px 2px 8px #0f0f0f);
   background-color: var(--dark-gray);
-  opacity: 0;
-  visibility: hidden;
-  &.active {
-    visibility: visible;
-    opacity: 1;
-    transition: 0.2s ease-out;
-    transform: translate(-40%, 0px);
-    transition-property: opacity, transform;
-  }
 `

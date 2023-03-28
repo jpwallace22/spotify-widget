@@ -15,6 +15,11 @@ interface ITrack extends SpotifyApi.TrackObjectFull {
   is_playing: boolean
 }
 
+interface IMessage {
+  message: string
+  status: 'error' | 'success'
+}
+
 interface ISpotifyApi {
   getCurrentTrack: (request: (event: IpcMainEvent, data: ITrack) => void) => void
   updateSavedTrack: () => void
@@ -27,7 +32,12 @@ interface IPlaylistApi {
   openPlaylist: () => void
 }
 
+interface IElectronApi {
+  getMessage: (request: (event: IpcMainEvent, data: IMessage) => void) => void
+}
+
 interface Window {
   spotifyApi: ISpotifyApi
   playlistApi: IPlaylistApi
+  electronApi: IElectronApi
 }

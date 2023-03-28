@@ -1,4 +1,17 @@
 import { BrowserWindow } from 'electron'
+import type SpotifyWebApi from 'spotify-web-api-node'
+
+export const refreshToken = async (client: SpotifyWebApi): Promise<void> => {
+  await client.refreshAccessToken().then(
+    ({ body: { access_token, refresh_token } }) => {
+      client.setCredentials({
+        accessToken: access_token,
+        refreshToken: refresh_token
+      })
+    },
+    (err) => console.error('Error when refreshing access token', err)
+  )
+}
 
 const authFlow = (authWindow: BrowserWindow | null): void => {
   const AUTH_URL = 'https://accounts.spotify.com/authorize?'

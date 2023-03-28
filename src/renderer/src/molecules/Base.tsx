@@ -4,6 +4,7 @@ const Base = styled.div`
   width: 330px;
   height: 112px;
   overflow: hidden;
+  position: relative;
   border-radius: 8px;
   padding: 16px;
   padding-right: 24px;

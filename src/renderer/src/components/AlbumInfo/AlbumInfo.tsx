@@ -5,6 +5,7 @@ import {
   TextWrapper
 } from '@renderer/components/AlbumInfo/albumInfo.styles'
 import ControlPanel from '@renderer/components/ControlPanel/ControlPanel'
+import Message from '@renderer/components/Message/Message'
 import Text from '@renderer/molecules/Text'
 import { Component, Show } from 'solid-js'
 
@@ -14,16 +15,7 @@ interface IAlbumInfo {
 
 const AlbumInfo: Component<IAlbumInfo> = (props) => {
   return (
-    <Show
-      when={props.track}
-      fallback={
-        <div class="center">
-          <Text size="lg" color="white">
-            No active devices
-          </Text>
-        </div>
-      }
-    >
+    <Show when={props.track} fallback={<Message text="No active device" />}>
       <AlbumWrapper>
         <AlbumArt src={props.track.album.images[0].url} />
         <TextWrapper>
@@ -37,6 +29,7 @@ const AlbumInfo: Component<IAlbumInfo> = (props) => {
           </FlexCol>
           <ControlPanel isPlaying={props.track.is_playing} isSaved={props.track.is_saved} />
         </TextWrapper>
+        <Message />
       </AlbumWrapper>
     </Show>
   )
