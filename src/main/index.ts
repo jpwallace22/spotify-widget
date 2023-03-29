@@ -1,15 +1,17 @@
 import { app, BrowserWindow, nativeImage, ipcMain, Menu } from 'electron'
+import { WINDOW_HEIGHT, WINDOW_WIDTH } from './src/constants'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import path, { join } from 'path'
+
 import spotifyClient from './src/spotify/spotifyClient'
 import authFlow, { refreshToken } from './src/spotify/authFlow'
-import createCustomTray from './src/createCustomTray'
-import loadRender from './src/loadRender'
 import fetchTrackInfo from './src/spotify/fetchTrackInfo'
 import updateSavedTrack from './src/spotify/updateSavedTrack'
-import pausePlay from './src/spotify/pausePlay'
 import createPlaylistTemplate from './src/spotify/createPlaylistTemplate'
-import { WINDOW_HEIGHT, WINDOW_WIDTH } from './src/constants'
+
+import createCustomTray from './src/createCustomTray'
+import loadRender from './src/loadRender'
+import pausePlay from './src/spotify/pausePlay'
 import expandWindow from './src/expandWindow'
 
 // Set custom protocol
@@ -41,8 +43,10 @@ app.whenReady().then(() => {
     useContentSize: true,
     show: false
   })
+
   const mainWindow = new BrowserWindow({
     show: false,
+    title: 'Spotify Widget',
     width: WINDOW_WIDTH,
     height: WINDOW_HEIGHT,
     useContentSize: true,
@@ -52,6 +56,7 @@ app.whenReady().then(() => {
     hasShadow: true,
     alwaysOnTop: true,
     frame: false,
+    icon: nativeImage.createFromPath(join(__dirname, '../../build/icon.png')),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js')
     }
