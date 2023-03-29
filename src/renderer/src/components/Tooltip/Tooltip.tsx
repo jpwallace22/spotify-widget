@@ -1,6 +1,6 @@
+import { Presence, Motion } from '@motionone/solid'
 import { StyledTip, TooltipWrapper } from '@renderer/components/Tooltip/tooltip.styles'
-import classNames from 'classnames'
-import { Component, createEffect, createSignal, JSXElement, mergeProps, on } from 'solid-js'
+import { Component, createEffect, createSignal, JSXElement, mergeProps, on, Show } from 'solid-js'
 
 interface ITooltip {
   tip?: string
@@ -28,7 +28,18 @@ const Tooltip: Component<ITooltip> = (props) => {
 
   return (
     <TooltipWrapper onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-      <StyledTip class={classNames({ active: showTip() })}> {props.tip}</StyledTip>
+      <Presence>
+        <Show when={showTip()}>
+          <Motion.div
+            initial={{ opacity: 0, y: -7 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -7 }}
+            transition={{ duration: 0.3 }}
+          >
+            <StyledTip>{props.tip}</StyledTip>
+          </Motion.div>
+        </Show>
+      </Presence>
       {props.children}
     </TooltipWrapper>
   )

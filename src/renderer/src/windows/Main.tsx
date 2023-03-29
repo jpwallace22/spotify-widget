@@ -3,7 +3,6 @@ import Base from '@renderer/molecules/Base'
 import Spinner from '@renderer/components/Spinner/Spinner'
 import useTrackInfo from '@renderer/hooks/useTrackInfo'
 import { Component, Show } from 'solid-js'
-
 const App: Component = () => {
   const [track, { isLoading }] = useTrackInfo()
 
