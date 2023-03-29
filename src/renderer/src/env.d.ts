@@ -28,12 +28,10 @@ interface ISpotifyApi {
   togglePlay: () => void
 }
 
-interface IPlaylistApi {
-  openPlaylist: () => void
-}
-
 interface IElectronApi {
   getMessage: (request: (event: IpcMainEvent, data: IMessage) => void) => void
+  expandWindow: () => void
+  openPlaylist: () => void
 }
 
 interface Window {

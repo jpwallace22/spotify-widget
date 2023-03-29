@@ -126,7 +126,11 @@ app.whenReady().then(() => {
     mainWindow.webContents.send('spotify:send-track', updatedTrack)
   })
 
-  ipcMain.handle('playlist:open', async () => {
+  ipcMain.handle('electron:open-playlist', async () => {
+    playlistMenu.popup()
+  })
+
+  ipcMain.handle('electron:expand-window', async () => {
     playlistMenu.popup()
   })
 

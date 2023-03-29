@@ -3,7 +3,7 @@ import store from '../store'
 import { ITrack } from './fetchTrackInfo'
 
 const updateSavedTrack = async (client: SpotifyWebApi): Promise<ITrack | null> => {
-  // TODO need to build schema for store to remove type assertions
+  // TODO: build schema for store to remove type assertions
   const trackId = store.get('track.id') as string | undefined
   const currentState = store.get('track.is_saved') as boolean
 
