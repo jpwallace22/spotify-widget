@@ -7,7 +7,7 @@ const useMessage = (): [Accessor<IMessage | null>] => {
     console.log(data.message)
 
     setMessage(data)
-    setTimeout(() => setMessage(null), 750)
+    setTimeout(() => setMessage(null), data.status === 'error' ? 1250 : 750)
   })
 
   return [message]

@@ -1,19 +1,29 @@
+import { BrowserWindow } from 'electron'
 import SpotifyWebApi from 'spotify-web-api-node'
+import sendMessage from '../sendMessage'
 import store from '../store'
 
 type MenuTemplateItem = Record<string, string | (() => void)>
 
-const createPlaylistTemplate = async (client: SpotifyWebApi): Promise<MenuTemplateItem[]> => {
+const createPlaylistTemplate = async (
+  client: SpotifyWebApi,
+  mainWindow: BrowserWindow
+): Promise<MenuTemplateItem[]> => {
   const template: Record<string, string | (() => void)>[] = []
   const res = await client.getUserPlaylists()
 
   if (res.statusCode === 200) {
     const handleClick = async (playlistId: string, currentUri: string): Promise<void> => {
-      const res = await client.getPlaylistTracks(playlistId)
-      const listTracks = res.body.items
-      const isInPlaylist = listTracks.some((item) => item.track?.uri === currentUri)
-      // TODO: Create alert window to handle response
-      !isInPlaylist && client.addTracksToPlaylist(playlistId, [currentUri])
+      try {
+        const res = await client.getPlaylistTracks(playlistId)
+        const listTracks = res.body.items
+        const isInPlaylist = listTracks.some((item) => item.track?.uri === currentUri)
+        !isInPlaylist && client.addTracksToPlaylist(playlistId, [currentUri])
+        sendMessage(mainWindow, { message: 'Added to Playlist' })
+      } catch (e) {
+        console.error(e)
+        sendMessage(mainWindow, { message: 'Something went wrong', status: 'error' })
+      }
     }
 
     const allPlaylists = res.body.items

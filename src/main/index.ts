@@ -96,7 +96,7 @@ app.whenReady().then(() => {
   mainTray.on('mouse-enter', async () => {
     const track = await fetchTrackInfo(spotifyApi, authWindow)
     mainWindow.webContents.send('spotify:send-track', track)
-    const template = await createPlaylistTemplate(spotifyApi)
+    const template = await createPlaylistTemplate(spotifyApi, mainWindow)
     playlistMenu = Menu.buildFromTemplate(template)
   })
 
@@ -104,10 +104,6 @@ app.whenReady().then(() => {
   ipcMain.handle('spotify:update-saved', async () => {
     const updatedTrack = await updateSavedTrack(spotifyApi)
     updatedTrack && mainWindow.webContents.send('spotify:send-track', updatedTrack)
-    mainWindow.webContents.send('electron:send-message', {
-      message: updatedTrack ? 'Track Saved' : 'Save Failed',
-      status: updatedTrack ? 'success' : 'error'
-    })
   })
 
   // handle Skip Track
