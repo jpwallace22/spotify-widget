@@ -33,10 +33,11 @@ const ImageWrapper = styled.div<IAlbumArt>`
   position: relative;
   &:not(.expanded):after {
     content: '';
-    color: white;
+    color: var(--white);
     font-size: 12px;
     letter-spacing: 0.04em;
     display: grid;
+    line-height: 0;
     place-items: center;
     z-index: 10;
     position: absolute;
@@ -44,15 +45,16 @@ const ImageWrapper = styled.div<IAlbumArt>`
     height: 0px;
     transition: 0.3s ease;
     transition-property: content, height;
-    background-color: rgba(0, 0, 0, 0.6);
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.6) 50%);
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
     top: 0;
     left: 0;
   }
-  &:not(.expanded):hover:after {
+  &.resting:hover:after {
     content: 'Expand';
     height: 30px;
+    padding-bottom: 8px;
   }
   &.expanded {
     width: 298px;
@@ -62,14 +64,19 @@ const ImageWrapper = styled.div<IAlbumArt>`
 `
 
 const AlbumArt: Component<IAlbumArt> = (props) => {
-  const [expanded, setExpanded] = createSignal()
+  const [expanded, setExpanded] = createSignal(false)
+  const [resting, setResting] = createSignal(true)
   const handleClick = (): void => {
     window.electronApi.expandWindow()
     setExpanded((prev) => !prev)
+    setResting(false)
+    setTimeout(() => {
+      !expanded() && setResting(true)
+    }, 300)
   }
 
   return (
-    <ImageWrapper class={classNames({ expanded: expanded() })}>
+    <ImageWrapper class={classNames({ expanded: expanded(), resting: resting() })}>
       <Image src={props.src} onClick={handleClick} class={classNames({ expanded: expanded() })} />
     </ImageWrapper>
   )
