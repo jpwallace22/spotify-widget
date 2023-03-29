@@ -24,8 +24,6 @@ if (process.defaultApp) {
 }
 
 app.whenReady().then(() => {
-  app.dock.hide()
-
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 
@@ -86,6 +84,8 @@ app.whenReady().then(() => {
         (err) => console.error('Error when retrieving access token', err)
       )
     }
+
+    app.dock.hide()
   })
 
   setInterval(() => refreshToken(spotifyApi), 1000 * 60 * 45)
@@ -133,5 +133,8 @@ app.whenReady().then(() => {
     expandWindow(mainWindow)
   })
 
-  mainWindow.on('blur', () => !is.dev && mainWindow.hide())
+  mainWindow.on('blur', () => {
+    !is.dev && mainWindow.hide()
+    app.dock.hide()
+  })
 })
