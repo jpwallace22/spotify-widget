@@ -11,7 +11,6 @@ const Image = styled.img<IAlbumArt>`
   position: relative;
   cursor: pointer;
   height: 80px;
-  margin-right: 16px;
   border-radius: 8px;
   transition: 0.25s linear;
   transition-property: width, height;
@@ -31,8 +30,10 @@ const Image = styled.img<IAlbumArt>`
 `
 const ImageWrapper = styled.div<IAlbumArt>`
   position: relative;
+  cursor: pointer;
   &:not(.expanded):after {
     content: '';
+    cursor: pointer;
     color: var(--white);
     font-size: 12px;
     letter-spacing: 0.04em;

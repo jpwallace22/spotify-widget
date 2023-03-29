@@ -139,7 +139,8 @@ app.whenReady().then(() => {
   })
 
   mainWindow.on('blur', () => {
-    !is.dev && mainWindow.hide()
+    mainWindow.hide()
+    // !is.dev && mainWindow.hide()
     app.dock.hide()
   })
 })

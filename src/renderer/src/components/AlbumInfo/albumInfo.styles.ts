@@ -9,6 +9,7 @@ export const TextWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
+  margin-left: 16px;
   justify-items: center;
 `
 
