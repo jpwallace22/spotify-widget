@@ -46,7 +46,7 @@ const ControlPanel: Component<IControlPanel> = (props) => {
         id="playlist"
         class="icon"
         tooltip="Add to Playlist"
-        onClick={(): void => window.playlistApi.openPlaylist()}
+        onClick={(): void => window.electronApi.openPlaylist()}
       />
     </FlexRow>
   )

@@ -9,6 +9,8 @@ import fetchTrackInfo from './src/spotify/fetchTrackInfo'
 import updateSavedTrack from './src/spotify/updateSavedTrack'
 import pausePlay from './src/spotify/pausePlay'
 import createPlaylistTemplate from './src/spotify/createPlaylistTemplate'
+import { WINDOW_HEIGHT, WINDOW_WIDTH } from './src/constants'
+import expandWindow from './src/expandWindow'
 
 // Set custom protocol
 if (process.defaultApp) {
@@ -43,11 +45,11 @@ app.whenReady().then(() => {
   })
   const mainWindow = new BrowserWindow({
     show: false,
-    width: 330,
-    height: 112,
+    width: WINDOW_WIDTH,
+    height: WINDOW_HEIGHT,
     useContentSize: true,
     autoHideMenuBar: true,
-    backgroundColor: '#1d1d1d',
+    backgroundColor: '#282828',
     resizable: is.dev,
     hasShadow: true,
     alwaysOnTop: true,
@@ -66,8 +68,6 @@ app.whenReady().then(() => {
     icon,
     clickWindow: mainWindow
   })
-
-  // const playlistMenu = Menu.buildFromTemplate(template)
 
   // Catch auth callback and set access token
   app.on('open-url', (_, redirect) => {
@@ -90,9 +90,8 @@ app.whenReady().then(() => {
 
   setInterval(() => refreshToken(spotifyApi), 1000 * 60 * 45)
 
-  let playlistMenu: Electron.Menu
-
   // load track on icon hover
+  let playlistMenu: Electron.Menu
   mainTray.on('mouse-enter', async () => {
     const track = await fetchTrackInfo(spotifyApi, authWindow)
     mainWindow.webContents.send('spotify:send-track', track)
@@ -126,8 +125,12 @@ app.whenReady().then(() => {
     mainWindow.webContents.send('spotify:send-track', updatedTrack)
   })
 
-  ipcMain.handle('playlist:open', async () => {
+  ipcMain.handle('electron:open-playlist', async () => {
     playlistMenu.popup()
+  })
+
+  ipcMain.handle('electron:expand-window', async () => {
+    expandWindow(mainWindow)
   })
 
   mainWindow.on('blur', () => !is.dev && mainWindow.hide())

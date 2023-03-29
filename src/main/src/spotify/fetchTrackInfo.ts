@@ -19,7 +19,7 @@ const fetchTrackInfo = async (
       authFlow(authWindow)
       setTimeout(() => {
         return fetchTrackInfo(client)
-      }, 1000)
+      }, 2000)
     }
 
     const playbackItem = playbackState.body.item

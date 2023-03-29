@@ -1,9 +1,5 @@
-import {
-  AlbumArt,
-  AlbumWrapper,
-  FlexCol,
-  TextWrapper
-} from '@renderer/components/AlbumInfo/albumInfo.styles'
+import AlbumArt from '@renderer/components/AlbumArt/AlbumArt'
+import { AlbumWrapper, FlexCol, TextWrapper } from '@renderer/components/AlbumInfo/albumInfo.styles'
 import ControlPanel from '@renderer/components/ControlPanel/ControlPanel'
 import Message from '@renderer/components/Message/Message'
 import Text from '@renderer/molecules/Text'
