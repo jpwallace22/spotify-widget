@@ -13,6 +13,7 @@ import createCustomTray from './src/createCustomTray'
 import loadRender from './src/loadRender'
 import pausePlay from './src/spotify/pausePlay'
 import expandWindow from './src/expandWindow'
+import store from './src/store'
 
 // Set custom protocol
 if (process.defaultApp) {
@@ -80,11 +81,13 @@ app.whenReady().then(() => {
     if (authCode) {
       spotifyApi.authorizationCodeGrant(authCode).then(
         ({ body: { access_token, refresh_token } }) => {
-          spotifyApi.setCredentials({
+          const credentials = {
             accessToken: access_token,
             refreshToken: refresh_token
-          })
+          }
           authWindow?.close()
+          spotifyApi.setCredentials(credentials)
+          store.set('credentials', credentials)
         },
         (err) => console.error('Error when retrieving access token', err)
       )
@@ -98,7 +101,7 @@ app.whenReady().then(() => {
   // load track on icon hover
   let playlistMenu: Electron.Menu
   mainTray.on('mouse-enter', async () => {
-    const track = await fetchTrackInfo(spotifyApi, authWindow)
+    const track = await fetchTrackInfo(spotifyApi)
     mainWindow.webContents.send('spotify:send-track', track)
     const template = await createPlaylistTemplate(spotifyApi, mainWindow)
     playlistMenu = Menu.buildFromTemplate(template)
@@ -142,5 +145,6 @@ app.whenReady().then(() => {
     mainWindow.hide()
     // !is.dev && mainWindow.hide()
     app.dock.hide()
+    refreshToken(spotifyApi)
   })
 })

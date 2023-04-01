@@ -8,19 +8,9 @@ export interface ITrack extends SpotifyApi.TrackObjectFull {
   is_playing: boolean
 }
 
-const fetchTrackInfo = async (
-  client: SpotifyWebApi,
-  authWindow?: BrowserWindow
-): Promise<ITrack | null> => {
+const fetchTrackInfo = async (client: SpotifyWebApi): Promise<ITrack | null> => {
   try {
     const playbackState = await client.getMyCurrentPlaybackState()
-
-    if (playbackState.statusCode === 401 && authWindow) {
-      authFlow(authWindow)
-      setTimeout(() => {
-        return fetchTrackInfo(client)
-      }, 2000)
-    }
 
     const playbackItem = playbackState.body.item
     const savedData = playbackItem?.id && (await client.containsMySavedTracks([playbackItem?.id]))
@@ -38,7 +28,16 @@ const fetchTrackInfo = async (
     store.set({ track })
     return track as ITrack
   } catch (error) {
-    console.log(error)
+    // @ts-expect-error need to create error instance
+    if (error?.statusCode === 401) {
+      const authWindow: BrowserWindow | null = new BrowserWindow({
+        resizable: true,
+        useContentSize: true,
+        show: false
+      })
+      authFlow(authWindow)
+      fetchTrackInfo(client)
+    }
     return null
   }
 }

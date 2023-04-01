@@ -1,13 +1,12 @@
 import { BrowserWindow } from 'electron'
 import type SpotifyWebApi from 'spotify-web-api-node'
+import store from '../store'
 
 export const refreshToken = async (client: SpotifyWebApi): Promise<void> => {
-  await client.refreshAccessToken().then(
-    ({ body: { access_token, refresh_token } }) => {
-      client.setCredentials({
-        accessToken: access_token,
-        refreshToken: refresh_token
-      })
+  client.refreshAccessToken().then(
+    ({ body: { access_token } }) => {
+      client.setCredentials({ accessToken: access_token })
+      store.set('accessToken', access_token)
     },
     (err) => console.error('Error when refreshing access token', err)
   )
